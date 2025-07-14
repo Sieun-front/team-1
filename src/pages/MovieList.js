@@ -34,12 +34,13 @@ const styles = {
     container: {
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
-        justifyContent: 'center',
         gap: '20px',
         padding: '2rem',
+        width: '100%',
+        boxSizing: 'border-box',
     },
     card: {
-        width: '200px',
+        width: '100%',
         border: '1px solid #ddd',
         borderRadius: '8px',
         overflow: 'hidden',
