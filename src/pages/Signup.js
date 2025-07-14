@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
 
 const Signup = () => {
-    // export default function PostDetail() 이거랑 똑같은건데, 협업시엔 걍 이렇게
-    // const Signup = () => {}하고 마지막 줄에 export default Signup; 쓰는게 낫대.
     const navigate = useNavigate();
     const [form, setForm] = useState({
         // 초기값 설정
@@ -15,12 +13,11 @@ const Signup = () => {
         nickname: '',
         university: '',
         location: '',
-    }); // 이거 백이랑은 안맞춰도 됨. 그냥 리액트에서 state에 일시적으로 저장하는거지 백이랑 연결 x.
-    // 근데 payload에선 백이랑 꼭 맞춰줘야 함.
+    });
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-    }; // ...form은 기존 폼 상태 복붙. [e.tartget.name]은 인풋의 name 속성, e.target.value는 바뀐 값. []의 키에 : 라는 값을 넣을거랑께.
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();

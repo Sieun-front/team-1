@@ -1,12 +1,9 @@
-import React from 'react';
+import MovieList from '../pages/MovieList';
 
-const Home = () => {
+export default function Home() {
     return (
-        <div style={{ padding: '2rem' }}>
-            <h1>홈 페이지입니다</h1>
-            <p>내용내용</p>
-        </div>
+        <>
+            <MovieList />
+        </>
     );
-};
-
-export default Home;
+}
