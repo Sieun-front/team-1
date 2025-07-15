@@ -3,53 +3,49 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
 
-const Signup = () => {
+export default function Signup() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
-        // 초기값 설정
         username: '',
-        email: '',
         password: '',
         nickname: '',
-        university: '',
-        location: '',
     });
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const payload = {
+            const { data } = await api.post('/dj/registration/', {
                 username: form.username,
-                email: form.email,
+
                 password1: form.password,
                 password2: form.password,
                 nickname: form.nickname,
-                university: form.university,
-                location: form.location,
-            };
-            const res = await api.post('/dj/registration/', payload);
-            console.log('회원가입 성공:', res.data);
-            navigate('/'); // 로그인 페이지로 이동
+            });
+
+            // 성공 시 토큰 저장
+            localStorage.setItem('accessToken', data.access);
+            localStorage.setItem('refreshToken', data.refresh);
+            // axios 기본 헤더에도 세팅
+            api.setAuthHeader(data.access);
+
+            // 가입 완료 후 로그인 페이지로 이동
+            navigate('/login');
         } catch (err) {
-            const status = err.response?.status;
-            const data = err.response?.data;
-            console.error(`회원가입 실패 [${status}] ▶`, data);
+            const status = err.response?.status ?? 500;
+            const errors = err.response?.data ?? {};
+            console.error(`회원가입 실패 [${status}] ▶`, errors);
 
             let message = '회원가입에 실패했습니다.';
-            if (data) {
-                if (data.username) message = data.username[0];
-                else if (data.email) message = data.email[0];
-                else if (data.password1) message = data.password1[0];
-                else if (data.nickname) message = data.nickname[0];
-                else if (data.university) message = data.university[0];
-                else if (data.location) message = data.location[0];
-                else if (typeof data.detail === 'string') message = data.detail;
-            }
+            if (errors.username) message = errors.username[0];
+            else if (errors.password) message = errors.password[0];
+            else if (errors.nickname) message = errors.nickname[0];
+            else if (typeof errors.detail === 'string') message = errors.detail;
+
             alert(message);
         }
     };
@@ -60,53 +56,28 @@ const Signup = () => {
                 <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 
                 <input
-                    type="text"
                     name="username"
+                    type="text"
                     placeholder="Username"
                     value={form.username}
                     onChange={handleChange}
                     className="w-full mb-4 px-4 py-2 border rounded-xl"
                     required
                 />
+
                 <input
-                    type="text"
                     name="nickname"
+                    type="text"
                     placeholder="Nickname"
                     value={form.nickname}
                     onChange={handleChange}
                     className="w-full mb-4 px-4 py-2 border rounded-xl"
                     required
                 />
+
                 <input
-                    type="text"
-                    name="university"
-                    placeholder="University"
-                    value={form.university}
-                    onChange={handleChange}
-                    className="w-full mb-4 px-4 py-2 border rounded-xl"
-                    required
-                />
-                <input
-                    type="text"
-                    name="location"
-                    placeholder="Location"
-                    value={form.location}
-                    onChange={handleChange}
-                    className="w-full mb-4 px-4 py-2 border rounded-xl"
-                    required
-                />
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="w-full mb-4 px-4 py-2 border rounded-xl"
-                    required
-                />
-                <input
-                    type="password"
                     name="password"
+                    type="password"
                     placeholder="Password"
                     value={form.password}
                     onChange={handleChange}
@@ -123,6 +94,4 @@ const Signup = () => {
             </form>
         </div>
     );
-};
-
-export default Signup;
+}

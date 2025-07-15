@@ -1,34 +1,41 @@
-const movies = [
-    { id: 1, title: '외계+인 1부', image: 'https://image.tmdb.org/t/p/original/ynyN9hdxL5vq7GnSX8Fdz3TfoTE.jpg' },
-    { id: 2, title: '탄생/재탄생', image: 'https://image.tmdb.org/t/p/original/zlEhsNfOKhbnfs5NTJ6zOZtoLBb.jpg' },
-    {
-        id: 3,
-        title: '그대들은 어떻게 살 것인가',
-        image: 'https://image.tmdb.org/t/p/original/kmoScy628A6JWv8mmd2ofrYv16T.jpg',
-    },
-    { id: 4, title: '스페이스 커뎃', image: 'https://image.tmdb.org/t/p/original/7rda0SRuIGA8BDC8FTYHAOyXaRj.jpg' },
-    { id: 5, title: '존 윅 4', image: 'https://image.tmdb.org/t/p/original/h3LsdSBzhRnBebz4BTpAhh63PD3.jpg' },
-    { id: 6, title: '나쁜 녀석들', image: 'https://image.tmdb.org/t/p/original/kNwqxVmtylfpnrcIjJuEuVwIHQC.jpg' },
-    {
-        id: 7,
-        title: '고스트버스터즈: 오싹한 뉴욕',
-        image: 'https://image.tmdb.org/t/p/original/mGzSIfzmcf9H91DS06cnka1SYrP.jpg"',
-    },
-    { id: 8, title: '비버리 힐스 캅', image: 'https://image.tmdb.org/t/p/original/eBJEvKkhQ0tUt1dBAcTEYW6kCle.jpg' },
-];
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default function MovieList() {
+const MovieList = () => {
+    const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                // 임시로 사용할 외부 API의 전체 URL을 직접 명시합니다.
+                const tempApiUrl = 'https://thehotpotato.store/movies/';
+                const res = await axios.get(tempApiUrl); // api 대신 axios를 직접 사용
+                setMovies(res.data);
+                console.log('임시 영화 목록 로딩 성공:', res.data); // 성공 시 데이터 확인용 로그 추가
+            } catch (err) {
+                console.error('영화 목록 로딩 실패 ▶', err);
+            }
+        };
+        fetchMovies();
+    }, []);
+
     return (
         <div style={styles.container}>
-            {movies.map((movie) => (
-                <div key={movie.id} style={styles.card}>
-                    <img src={movie.image} alt={movie.title} style={styles.image} />
-                    <div style={styles.title}>{movie.title}</div>
-                </div>
-            ))}
+            {movies.length === 0 ? (
+                <p>영화를 불러오는 중이거나, 영화 데이터가 없습니다.</p>
+            ) : (
+                movies.map((movie) => (
+                    <div key={movie.id} style={styles.card}>
+                        <img src={movie.poster_url} alt={movie.title_kor} style={styles.image} />
+                        <div style={styles.title}>{movie.title_kor}</div>
+                    </div>
+                ))
+            )}
         </div>
     );
-}
+};
+
+export default MovieList;
 
 const styles = {
     container: {
